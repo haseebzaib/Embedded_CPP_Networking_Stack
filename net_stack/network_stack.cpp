@@ -44,7 +44,7 @@ namespace net {
 
             if (bytes_received > 0) {
                 // If we got a packet, process it immediately.
-                hal_log(LogLevel::DEBUG, "poll() received a frame of size: %zu ", bytes_received);
+                NET_LOG_DEBUG(NET, "poll() received a frame of size: %zu ", bytes_received);
                 process_incoming_frame({ buffer_view.data(), bytes_received });
             }
             else {
@@ -56,11 +56,11 @@ namespace net {
 
         // 2. --- PERIODIC TASKS ---
         // Later, this is where we would check timers for DHCP, TCP, etc.
-        //uint32_t current_time_ms = hal_timer_get_ms();
-        //if (current_time_ms - m_last_periodic_ms > 2000) { // Every 1 second
-        //    m_arp_cache.age_entries(current_time_ms);
-        //    m_last_periodic_ms = current_time_ms;
-        //}
+        uint32_t current_time_ms = hal_timer_get_ms();
+        if (current_time_ms - m_last_periodic_ms > 2000) { // Every 1 second
+            m_arp_cache.age_entries(current_time_ms);
+            m_last_periodic_ms = current_time_ms;
+        }
     }
 
 
@@ -76,7 +76,7 @@ namespace net {
 
         if (eth_header->ethertype == ntohs(ETHERTYPE_ARP))
         {
-            hal_log(LogLevel::DEBUG, "Frame has EtherType 0x%04X", ntohs(eth_header->ethertype));
+            NET_LOG_DEBUG(NET, "Frame has EtherType 0x%04X", ntohs(eth_header->ethertype));
           
             auto arp_payload = frame.subspan(sizeof(EthernetHeader));
             if (arp_payload.size() >= sizeof(ArpPacket)) {
@@ -115,7 +115,7 @@ namespace net {
 
  
 
-        hal_log(LogLevel::INFO, "Sending ARP Request for gateway...");
+        NET_LOG_DEBUG(NET, "Sending ARP Request for gateway...");
         hal_net_send(buffer.data(), buffer.size());
     }
 
@@ -144,7 +144,7 @@ namespace net {
         std::memcpy(arp_packet->target_mac, target_mac.data(), MAC_ADDRESS_LENGTH);
         std::memcpy(arp_packet->target_ip, target_ip.data(), IPV4_ADDRESS_LENGTH);
 
-        hal_log(LogLevel::INFO, "Sending ARP reply...");
+        NET_LOG_DEBUG(NET, "Sending ARP reply...");
         hal_net_send(packet_buffer.data(), packet_buffer.size());
     }
 
@@ -158,7 +158,7 @@ namespace net {
         if (mac_address_.has_value())
         {
             std::array<uint8_t, MAC_ADDRESS_LENGTH> logging = mac_address_.value();
-            hal_log(LogLevel::DEBUG, "MAC Address: %x:%x:%x:%x:%x:%x", logging[0], logging[1], logging[2], logging[3], logging[4], logging[5]);
+            NET_LOG_DEBUG(NET, "MAC Address: %x:%x:%x:%x:%x:%x", logging[0], logging[1], logging[2], logging[3], logging[4], logging[5]);
         }
 
 

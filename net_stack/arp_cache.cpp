@@ -11,21 +11,21 @@ namespace net {
 
     std::optional<std::array<uint8_t, MAC_ADDRESS_LENGTH>>
         ArpCache::lookup(const std::array<uint8_t, IPV4_ADDRESS_LENGTH>& ip_to_find)  {
-        hal_log(LogLevel::DEBUG, "--- ARP Cache Lookup ---");
-        hal_log(LogLevel::DEBUG, "Searching for IP: %d.%d.%d.%d",
+        NET_LOG_DEBUG(ARP, "--- ARP Cache Lookup ---");
+        NET_LOG_DEBUG(ARP, "Searching for IP: %d.%d.%d.%d",
             ip_to_find[0], ip_to_find[1], ip_to_find[2], ip_to_find[3]);
 
         for (const auto& entry : m_entries) {
             if (entry.state == ArpEntryState::RESOLVED) {
                 // Compare the entry's IP with the IP we are looking for.
                 if (std::memcmp(entry.ipv4_address.data(), ip_to_find.data(), IPV4_ADDRESS_LENGTH) == 0) {
-                    hal_log(LogLevel::DEBUG, "  MATCH FOUND!");
+                    NET_LOG_DEBUG(ARP, "  MATCH FOUND!");
                     return entry.mac_address; // Found it!
                 }
             }
         }
 
-        hal_log(LogLevel::DEBUG, "  No match found in cache.");
+        NET_LOG_DEBUG(ARP, "  No match found in cache.");
         return std::nullopt; // Did not find it.
     }
 
@@ -47,7 +47,7 @@ namespace net {
         if (packet.opcode == ARP_OPCODE_REQUEST) {
             // Is the target IP in the packet the same as our IP?
             if (std::memcmp(packet.target_ip, stack.get_config()->ipv4_address.data(), IPV4_ADDRESS_LENGTH) == 0) {
-                hal_log(LogLevel::INFO, "Received an ARP request for our IP. Sending reply...");
+                NET_LOG_DEBUG(ARP, "Received an ARP request for our IP. Sending reply...");
                 // The stack is responsible for constructing and sending the actual packet.
                 stack.send_arp_reply(sender_ip, sender_mac);
             }
@@ -62,7 +62,7 @@ namespace net {
             if (entry.state == ArpEntryState::RESOLVED) {
                 if (current_time_ms - entry.timestamp_ms > ARP_ENTRY_TIMEOUT_MS) {
                     // This entry is too old. Invalidate it.
-                    hal_log(LogLevel::DEBUG, "ARP entry expired. Clearing.");
+                    NET_LOG_DEBUG(ARP, "ARP entry expired. Clearing.");
                     entry.state = ArpEntryState::EMPTY;
                 }
             }
@@ -83,7 +83,7 @@ namespace net {
                 entry.mac_address = mac_address;
                 entry.state = new_state;
                 entry.timestamp_ms = hal_timer_get_ms();
-                hal_log(LogLevel::DEBUG, "Updated ARP cache entry.");
+                NET_LOG_DEBUG(ARP, "Updated ARP cache entry.");
                 return;
             }
         }
@@ -95,14 +95,14 @@ namespace net {
                 entry.mac_address = mac_address;
                 entry.state = new_state;
                 entry.timestamp_ms = hal_timer_get_ms();
-                hal_log(LogLevel::DEBUG, "Added new ARP cache entry.");
+                NET_LOG_DEBUG(ARP, "Added new ARP cache entry.");
                 return;
             }
         }
 
         // If we are still here, the cache is full. We would implement a
         // strategy to replace the oldest entry here, but for now, we'll just log it.
-        hal_log(LogLevel::WARN, "ARP Cache is full! Could not add new entry.");
+        NET_LOG_DEBUG(ARP, "ARP Cache is full! Could not add new entry.");
     }
 
 

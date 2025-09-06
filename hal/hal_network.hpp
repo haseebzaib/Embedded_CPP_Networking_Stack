@@ -16,6 +16,13 @@ namespace net {
 
 }
 
+/*Only usefull for testing on computers*/
+enum class NetworkFiltering {
+    ARP,
+};
+
+int hal_net_init(const net::NetworkConfig* config, NetworkFiltering Filtering);
+
 /**
  * @brief Initializes the underlying network hardware/driver.
  * * @param config A pointer to the network configuration struct.

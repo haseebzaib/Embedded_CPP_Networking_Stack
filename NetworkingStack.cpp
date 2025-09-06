@@ -5,6 +5,7 @@
 #include "hal/hal_network.hpp"
 #include "hal/hal_timer.hpp"
 #include "hal/hal_logging.hpp"
+
 #include "protocols/ethernet.hpp"
 #include "protocols/arp.hpp"
 #include "net_stack\network_stack.hpp"
@@ -41,7 +42,7 @@ int main()
 		.gateway_address = {192,168,18,1}
 	};
 
-	if (hal_net_init(&netconfig) != 0)
+	if (hal_net_init(&netconfig,NetworkFiltering::ARP) != 0)
 	{
 		return 1;
 	}
@@ -52,7 +53,7 @@ int main()
     uint32_t last_arp_request_ms = 0;
     const uint32_t ARP_REQUEST_INTERVAL_MS = 2000; // 2 seconds
 
-    hal_log(LogLevel::INFO, "Starting ARP discovery for gateway...");
+    NET_LOG_INFO(HAL, "Starting ARP discovery for gateway...");
 
     // This loop will run until we get a reply.
     while (!stack.is_gateway_mac_known()) {
@@ -67,7 +68,7 @@ int main()
         }
     }
 
-    hal_log(LogLevel::INFO, "SUCCESS: Gateway MAC address has been resolved!");
+    NET_LOG_INFO(HAL, "SUCCESS: Gateway MAC address has been resolved!");
 
     // We can now lookup the MAC and print it (optional)
     auto gateway_mac = stack.get_arp_cache().lookup(netconfig.gateway_address);
@@ -75,7 +76,7 @@ int main()
         // You would need to add a small function to print the MAC address here
     }
 
-    hal_log(LogLevel::INFO, "Test complete. Shutting down.");
+    NET_LOG_INFO(HAL, "Test complete. Shutting down.");
     hal_net_shutdown();
 
 	return 0;

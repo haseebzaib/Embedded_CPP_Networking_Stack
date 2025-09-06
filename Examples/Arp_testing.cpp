@@ -41,7 +41,7 @@ int main()
         .gateway_address = {192,168,18,1}
     };
 
-    if (hal_net_init(&netconfig) != 0)
+    if (hal_net_init(&netconfig, NetworkFiltering::ARP) != 0)
     {
         return 1;
     }
