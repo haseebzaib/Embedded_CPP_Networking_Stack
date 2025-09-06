@@ -56,11 +56,11 @@ namespace net {
 
         // 2. --- PERIODIC TASKS ---
         // Later, this is where we would check timers for DHCP, TCP, etc.
-        uint32_t current_time_ms = hal_timer_get_ms();
-        if (current_time_ms - m_last_periodic_ms > 2000) { // Every 1 second
-            m_arp_cache.age_entries(current_time_ms);
-            m_last_periodic_ms = current_time_ms;
-        }
+        //uint32_t current_time_ms = hal_timer_get_ms();
+        //if (current_time_ms - m_last_periodic_ms > 2000) { // Every 1 second
+        //    m_arp_cache.age_entries(current_time_ms);
+        //    m_last_periodic_ms = current_time_ms;
+        //}
     }
 
 
@@ -153,7 +153,16 @@ namespace net {
         // We ask our ARP cache if it has an entry for the gateway's IP.
         // The lookup function returns a std::optional. If it has a value,
         // the lookup was successful.
-        return m_arp_cache.lookup(m_config->gateway_address).has_value();
+        auto mac_address_ = m_arp_cache.lookup(m_config->gateway_address);
+
+        if (mac_address_.has_value())
+        {
+            std::array<uint8_t, MAC_ADDRESS_LENGTH> logging = mac_address_.value();
+            hal_log(LogLevel::DEBUG, "MAC Address: %x:%x:%x:%x:%x:%x", logging[0], logging[1], logging[2], logging[3], logging[4], logging[5]);
+        }
+
+
+        return mac_address_.has_value();
     }
 
      ArpCache& NetworkStack::get_arp_cache()  {
