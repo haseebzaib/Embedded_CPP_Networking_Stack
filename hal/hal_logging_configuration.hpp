@@ -1,5 +1,7 @@
 #pragma once
-#include "hal_logging.hpp" 
+// forward declare LogLevel so we don't depend on hal_logging.hpp
+enum class LogLevel : int;
+
 
 // This is the central configuration file for the logging system.
 // By changing the #define values here and recompiling, you can control

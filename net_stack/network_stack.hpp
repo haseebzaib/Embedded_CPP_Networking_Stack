@@ -5,9 +5,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <span>
-#include "hal\hal_network.hpp"
-#include "protocols\ethernet.hpp"
-#include "protocols\arp.hpp"
+#include "hal/hal_network.hpp"
+#include "protocols/ethernet.hpp"
+#include "protocols/arp.hpp"
 #include "arp_cache.hpp"
 
 

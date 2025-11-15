@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include "hal_logging_configuration.hpp"
 
 // Forward declare the component enum to avoid circular includes
 namespace net {
@@ -22,18 +23,18 @@ namespace net {
 
 
 
-#include "HAL_logging_configuration.hpp"
+#include "hal_logging_configuration.hpp"
 
 // A helper macro to get the component's max level
 #define GET_LOG_LEVEL(component) LOG_LEVEL_##component
 
-// The user-facing macros
 #define NET_LOG(component, level, ...) \
     do { \
         if constexpr (level <= GET_LOG_LEVEL(component)) { \
             hal_log(net::LogComponent::component, level, __VA_ARGS__); \
         } \
     } while (0)
+
 
 #define NET_LOG_ERROR(component, ...) NET_LOG(component, LogLevel::ERROR, __VA_ARGS__)
 #define NET_LOG_WARN(component, ...)  NET_LOG(component, LogLevel::WARN,  __VA_ARGS__)

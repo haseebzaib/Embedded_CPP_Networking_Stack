@@ -8,7 +8,7 @@
 
 #include "protocols/ethernet.hpp"
 #include "protocols/arp.hpp"
-#include "net_stack\network_stack.hpp"
+#include "net_stack/network_stack.hpp"
 #include <vector>
 #include <cstdint>
 #include <cstring> 
@@ -52,6 +52,7 @@ int main()
 
     uint32_t last_arp_request_ms = 0;
     const uint32_t ARP_REQUEST_INTERVAL_MS = 2000; // 2 seconds
+    
 
     NET_LOG_INFO(HAL, "Starting ARP discovery for gateway...");
 
