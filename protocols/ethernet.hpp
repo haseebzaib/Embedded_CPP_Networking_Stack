@@ -16,11 +16,8 @@ struct EthernetHeader {
 static_assert(sizeof(EthernetHeader) == 14, "EthernetHeader size must be 14 bytes");
 
 // Common EtherType values.
-// We need to handle byte order (endianness) for these.
-// Network byte order is big-endian. Most CPUs (x86, ARM) are little-endian.
-// We will create a helper for this later.
-constexpr uint16_t ETHERTYPE_IPV4 = 0x0800;
-constexpr uint16_t ETHERTYPE_ARP = 0x0806;
-constexpr uint16_t ETHERTYPE_IPV6 = 0x86DD;
+constexpr uint16_t ETHERTYPE_IPV4 = 0x0800;  //host order; hton when writing to the wire
+constexpr uint16_t ETHERTYPE_ARP = 0x0806;   //host order; hton when writing to the wire
+constexpr uint16_t ETHERTYPE_IPV6 = 0x86DD;  //host order; hton when writing to the wire
 
 #endif // PROTOCOLS_ETHERNET_H

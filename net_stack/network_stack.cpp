@@ -72,11 +72,10 @@ namespace net {
         }
 
         const EthernetHeader* eth_header = reinterpret_cast<const EthernetHeader*>(frame.data());
-
-
-        if (eth_header->ethertype == ntohs(ETHERTYPE_ARP))
+        uint16_t ethertype = ntohs(eth_header->ethertype);
+        if (ethertype == ETHERTYPE_ARP)
         {
-            NET_LOG_DEBUG(NET, "Frame has EtherType 0x%04X", ntohs(eth_header->ethertype));
+            NET_LOG_DEBUG(NET, "Frame has EtherType 0x%04X", ethertype);
           
             auto arp_payload = frame.subspan(sizeof(EthernetHeader));
             if (arp_payload.size() >= sizeof(ArpPacket)) {

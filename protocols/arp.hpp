@@ -22,15 +22,10 @@ struct ArpPacket {
 static_assert(sizeof(ArpPacket) == 28, "ArpPacket size is incorrect!");
 
 //ARP constants
-// we will use these to fill our packet fields
-// These are already in network byte order of big endian
-// because they are multi bytes constants we will still need to use htons()
-// for values we create at runtime
-
 constexpr uint16_t ARP_HW_TYPE_ETHERNET = 1; //correct formatted for big endian
-constexpr uint16_t ARP_PROTO_TYPE_IPV4 = 0x0008; // this is 0x0800 swapper for big endian
-constexpr uint16_t ARP_OPCODE_REQUEST = 1; // in big endian
-constexpr uint16_t ARP_OPCODE_REPLY = 2; //in big endian
+constexpr uint16_t ARP_PROTO_TYPE_IPV4 = 0x0800; //host order; hton when writing to the wire
+constexpr uint16_t ARP_OPCODE_REQUEST = 1; //host order; hton when writing to the wire
+constexpr uint16_t ARP_OPCODE_REPLY = 2; //host order; hton when writing to the wire
 
 constexpr size_t IPV4_ADDRESS_LENGTH = 4;
 constexpr size_t MAC_ADDRESS_LENGTH = 6;
