@@ -125,6 +125,7 @@ int hal_net_init(const net::NetworkConfig* /*config*/, NetworkFiltering filterin
         NET_LOG_ERROR(HAL, "socket(AF_PACKET) failed");
         return -1;
     }
+    
 
     // 2) Pick interface: use NET_IFACE env, else first UP/RUNNING non-loopback
     const char* env = std::getenv("NET_IFACE");
