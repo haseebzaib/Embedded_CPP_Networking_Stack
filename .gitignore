@@ -12,6 +12,7 @@
 *.env
 codex.md
 
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

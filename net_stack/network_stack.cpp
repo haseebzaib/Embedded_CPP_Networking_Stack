@@ -6,7 +6,7 @@
 #include "protocols/ethernet.hpp"
 #include "iostream"
 #include "cstring"
-
+#include <span>
 namespace net {
 
     static uint16_t htons(uint16_t hostshort)
@@ -77,7 +77,7 @@ namespace net {
         {
             NET_LOG_DEBUG(NET, "Frame has EtherType 0x%04X", ethertype);
           
-            auto arp_payload = frame.subspan(sizeof(EthernetHeader));
+            std::span<const std::byte>  arp_payload = frame.subspan(sizeof(EthernetHeader));
             if (arp_payload.size() >= sizeof(ArpPacket)) {
                 const ArpPacket* arp_packet = reinterpret_cast<const ArpPacket*>(arp_payload.data());
                 // Hand off all ARP processing to the cache.

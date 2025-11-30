@@ -3,7 +3,7 @@
 #include "hal/hal_logging.hpp"
 #include "hal/hal_timer.hpp"
 #include "cstring"
-
+#include <span>
 namespace net
 {
 
@@ -65,6 +65,7 @@ namespace net
         // Add or update the sender's information in the cache now.
         add_or_update_entry(sender_ip, sender_mac, ArpEntryState::RESOLVED);
         uint16_t opcode = ntohs(packet.opcode);
+        NET_LOG_DEBUG(ARP, "OP-CODE RECV: %d", opcode);
         // Now, check if this packet is a request specifically for us.
         if (opcode == ARP_OPCODE_REQUEST)
         {
