@@ -4,25 +4,12 @@
 #include "hal/hal_logging.hpp"
 #include "protocols/arp.hpp"
 #include "protocols/ethernet.hpp"
+#include "byte_order.hpp"
 #include "iostream"
 #include "cstring"
 #include <span>
 namespace net {
 
-    static uint16_t htons(uint16_t hostshort)
-    {
-        uint16_t test = 1;
-        if (*(reinterpret_cast<uint8_t*>(&test)) == 1) { // Little-endian check
-            return (hostshort >> 8) | (hostshort << 8);
-        }
-        else {
-            return hostshort;
-        }
-    }
-
-    static uint16_t ntohs(uint16_t netshort) {
-        return htons(netshort);
-    }
 
     NetworkStack::NetworkStack(const NetworkConfig* config)
         : m_config(config) {
@@ -72,7 +59,7 @@ namespace net {
         }
 
         const EthernetHeader* eth_header = reinterpret_cast<const EthernetHeader*>(frame.data());
-        uint16_t ethertype = ntohs(eth_header->ethertype);
+        uint16_t ethertype = net_ntohs16(eth_header->ethertype);
         if (ethertype == ETHERTYPE_ARP)
         {
             NET_LOG_DEBUG(NET, "Frame has EtherType 0x%04X", ethertype);
@@ -99,14 +86,14 @@ namespace net {
         // --- Fill in the Ethernet Header ---
         memset(eth_header->destination_mac, 0xFF, 6);
         memcpy(eth_header->source_mac, m_config->mac_address.data(), 6);
-        eth_header->ethertype = htons(ETHERTYPE_ARP);
+        eth_header->ethertype = net_htons16(ETHERTYPE_ARP);
 
         // --- Fill in the ARP Packet ---
-        arp_packet->hardware_type = htons(ARP_HW_TYPE_ETHERNET);
-        arp_packet->protocol_type = htons(ETHERTYPE_IPV4);
+        arp_packet->hardware_type = net_htons16(ARP_HW_TYPE_ETHERNET);
+        arp_packet->protocol_type = net_htons16(ETHERTYPE_IPV4);
         arp_packet->hardware_addr_len = 6;
         arp_packet->protocol_addr_len = 4;
-        arp_packet->opcode = htons(ARP_OPCODE_REQUEST);
+        arp_packet->opcode = net_htons16(ARP_OPCODE_REQUEST);
         memcpy(arp_packet->sender_mac, m_config->mac_address.data(), 6);
         memcpy(arp_packet->sender_ip, m_config->ipv4_address.data(), 4);
         memset(arp_packet->target_mac, 0x00, 6);
@@ -130,14 +117,14 @@ namespace net {
         // Fill Ethernet Header
         std::memcpy(eth_header->destination_mac, target_mac.data(), MAC_ADDRESS_LENGTH); // Send directly to the requester
         std::memcpy(eth_header->source_mac, m_config->mac_address.data(), MAC_ADDRESS_LENGTH);
-        eth_header->ethertype = htons(ETHERTYPE_ARP);
+        eth_header->ethertype = net_htons16(ETHERTYPE_ARP);
 
         // Fill ARP Packet
-        arp_packet->hardware_type = htons(ARP_HW_TYPE_ETHERNET);
-        arp_packet->protocol_type = htons(ETHERTYPE_IPV4);
+        arp_packet->hardware_type = net_htons16(ARP_HW_TYPE_ETHERNET);
+        arp_packet->protocol_type = net_htons16(ETHERTYPE_IPV4);
         arp_packet->hardware_addr_len = MAC_ADDRESS_LENGTH;
         arp_packet->protocol_addr_len = IPV4_ADDRESS_LENGTH;
-        arp_packet->opcode = htons(ARP_OPCODE_REPLY);
+        arp_packet->opcode = net_htons16(ARP_OPCODE_REPLY);
         std::memcpy(arp_packet->sender_mac, m_config->mac_address.data(), MAC_ADDRESS_LENGTH);
         std::memcpy(arp_packet->sender_ip, m_config->ipv4_address.data(), IPV4_ADDRESS_LENGTH);
         std::memcpy(arp_packet->target_mac, target_mac.data(), MAC_ADDRESS_LENGTH);

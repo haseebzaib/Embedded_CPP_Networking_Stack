@@ -139,6 +139,7 @@ CMakeFiles/Networking.dir/net_stack/network_stack.cpp.o: \
  /usr/include/c++/13/bits/uses_allocator_args.h /usr/include/c++/13/tuple \
  /usr/include/c++/13/bits/ranges_util.h \
  /home/hsb/Embedded_CPP_Networking_Stack/hal/hal_logging_configuration.hpp \
+ /home/hsb/Embedded_CPP_Networking_Stack/net_stack/byte_order.hpp \
  /usr/include/c++/13/iostream /usr/include/c++/13/ostream \
  /usr/include/c++/13/ios /usr/include/c++/13/bits/ios_base.h \
  /usr/include/c++/13/ext/atomicity.h \

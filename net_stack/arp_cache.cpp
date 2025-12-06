@@ -2,6 +2,7 @@
 #include "network_stack.hpp"
 #include "hal/hal_logging.hpp"
 #include "hal/hal_timer.hpp"
+#include "byte_order.hpp"
 #include "cstring"
 #include <span>
 namespace net
@@ -9,23 +10,6 @@ namespace net
 
     static constexpr uint32_t ARP_ENTRY_TIMEOUT_MS = 5 * 60 * 1000;
 
-    static uint16_t htons(uint16_t hostshort)
-    {
-        uint16_t test = 1;
-        if (*(reinterpret_cast<uint8_t *>(&test)) == 1)
-        { // Little-endian check
-            return (hostshort >> 8) | (hostshort << 8);
-        }
-        else
-        {
-            return hostshort;
-        }
-    }
-
-    static uint16_t ntohs(uint16_t netshort)
-    {
-        return htons(netshort);
-    }
 
     std::optional<std::array<uint8_t, MAC_ADDRESS_LENGTH>>
     ArpCache::lookup(const std::array<uint8_t, IPV4_ADDRESS_LENGTH> &ip_to_find)
@@ -64,7 +48,7 @@ namespace net
 
         // Add or update the sender's information in the cache now.
         add_or_update_entry(sender_ip, sender_mac, ArpEntryState::RESOLVED);
-        uint16_t opcode = ntohs(packet.opcode);
+        uint16_t opcode = net_ntohs16(packet.opcode);
         NET_LOG_DEBUG(ARP, "OP-CODE RECV: %d", opcode);
         // Now, check if this packet is a request specifically for us.
         if (opcode == ARP_OPCODE_REQUEST)
