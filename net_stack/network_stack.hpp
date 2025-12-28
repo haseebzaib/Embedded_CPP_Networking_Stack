@@ -36,12 +36,27 @@ namespace net {
 		ArpCache& get_arp_cache() ;
 
 	private:
-		void process_incoming_frame(std::span<const std::byte> frame);
+			enum class E_EtherType : uint16_t {
+			Arp ,
+			IpV4,
+			IpV6,
+			Unknown,
+		};
 	
 		std::array<std::byte, 1514> m_packet_buffer;
 		const NetworkConfig* m_config;
 		uint32_t m_last_periodic_ms = 0;
 		ArpCache m_arp_cache;
+
+
+	    E_EtherType decode_ether_type(uint16_t ethertype);
+		void handle_arp_frame(std::span<const std::byte> frame);
+		void handle_ipv4_frame(std::span<const std::byte> frame);
+		void handle_ipv6_frame(std::span<const std::byte> frame);
+		void handle_unknown_frame(std::span<const std::byte> frame);
+		void process_incoming_frame(std::span<const std::byte> frame);
+
+
 	};
 
 }
