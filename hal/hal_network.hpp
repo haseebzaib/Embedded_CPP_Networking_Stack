@@ -19,6 +19,7 @@ namespace net {
 /*Only usefull for testing on computers*/
 enum class NetworkFiltering {
     ARP,
+    NONE,
 };
 
 int hal_net_init(const net::NetworkConfig* config, NetworkFiltering Filtering);

@@ -183,6 +183,16 @@ namespace net
     }
     void NetworkStack::handle_ipv4_frame(std::span<const std::byte> frame)
     {
+        std::span<const std::byte> ipv4_payload = frame.subspan(sizeof(EthernetHeader));
+
+        if(ipv4_payload.size() >= sizeof(Ipv4Header))
+        {
+            const Ipv4Header *ipv4_header = reinterpret_cast<const Ipv4Header *>(ipv4_payload.data());
+             net::Split<std::uint8_t> s;
+
+             s.u8 = ipv4_header->version_ihl;
+             NET_LOG_DEBUG(NET, "Ipv4 HeaderLength: %d:%d | Ipv4 Version: %d:%d",s.le.low*4,s.low()*4,s.le.high,s.high());
+        }
     }
     void NetworkStack::handle_ipv6_frame(std::span<const std::byte> frame)
     {
@@ -205,11 +215,13 @@ namespace net
         {
         case E_EtherType::Arp:
             /* code */
+             NET_LOG_DEBUG(NET,"ARP frame detected");
             handle_arp_frame(frame);
             break;
 
         case E_EtherType::IpV4:
             /* code */
+            NET_LOG_DEBUG(NET,"IPV4 frame detected");
             handle_ipv4_frame(frame);
             break;
 

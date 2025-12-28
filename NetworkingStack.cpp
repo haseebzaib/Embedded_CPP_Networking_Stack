@@ -41,7 +41,7 @@ int main()
         .ipv4_address = {10, 23, 42, 10},
         .gateway_address = {10, 23, 42, 1}};
 
-    if (hal_net_init(&netconfig, NetworkFiltering::ARP) != 0)
+    if (hal_net_init(&netconfig, NetworkFiltering::NONE) != 0)
     {
         return 1;
     }
@@ -55,18 +55,18 @@ int main()
     NET_LOG_INFO(HAL, "Starting ARP discovery for gateway...");
 
     // This loop will run until we get a reply.
-    while (!stack.is_gateway_mac_known())
+    while (1)//!stack.is_gateway_mac_known())
     {
         // Always poll for incoming packets and to run housekeeping.
         stack.poll();
 
-        // Check if it's time to send our next ARP request.
-        uint32_t current_time_ms = hal_timer_get_ms();
-        if (current_time_ms - last_arp_request_ms > ARP_REQUEST_INTERVAL_MS)
-        {
-            stack.send_arp_request_for_gateway();
-            last_arp_request_ms = current_time_ms;
-        }
+        // // Check if it's time to send our next ARP request.
+        // uint32_t current_time_ms = hal_timer_get_ms();
+        // if (current_time_ms - last_arp_request_ms > ARP_REQUEST_INTERVAL_MS)
+        // {
+        //     stack.send_arp_request_for_gateway();
+        //     last_arp_request_ms = current_time_ms;
+        // }
         std::this_thread::sleep_for(std::chrono::milliseconds(100)); // slow down the loop
     }
 
