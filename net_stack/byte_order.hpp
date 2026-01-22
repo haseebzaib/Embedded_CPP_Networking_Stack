@@ -3,6 +3,7 @@
 
 #include "stdint.h"
 #include "type_traits"
+#include <limits>
 
 namespace net
 {
@@ -48,6 +49,25 @@ namespace net
             std::uint8_t b3;
         } le; // little endian
     };
+
+    template <typename integer_type, unsigned Offset, unsigned Width>
+    constexpr integer_type extract_bits(integer_type v)
+    {
+        static_assert(std::is_integral_v<integer_type>, "T must be an integral type");
+        static_assert(std::is_unsigned_v<integer_type>, "T muist be unsigned");
+
+        constexpr unsigned Bits = std::numeric_limits<integer_type>::digits;
+        static_assert(Width >= 1, "Width must be >= 1");
+        static_assert(Offset < Bits, "Offset out of range");
+        static_assert(Offset + Width <= Bits, "Offset + Width out of range");
+
+        // mask = (1<<Width)-1 but handle Width==Bits safely
+        constexpr integer_type mask = (Width == Bits)
+                               ? ~integer_type{0}
+                               : (integer_type{1} << Width) - integer_type{1};
+
+        return (v >> Offset) & mask;
+    }
 
     /* Host to Network */
     inline uint16_t net_htons16(uint16_t v)

@@ -185,13 +185,54 @@ namespace net
     {
         std::span<const std::byte> ipv4_payload = frame.subspan(sizeof(EthernetHeader));
 
-        if(ipv4_payload.size() >= sizeof(Ipv4Header))
+        if (ipv4_payload.size() >= sizeof(Ipv4Header))
         {
             const Ipv4Header *ipv4_header = reinterpret_cast<const Ipv4Header *>(ipv4_payload.data());
-             net::Split<std::uint8_t> s;
+            net::Split<std::uint8_t> s;
 
-             s.u8 = ipv4_header->version_ihl;
-             NET_LOG_DEBUG(NET, "Ipv4 HeaderLength: %d:%d | Ipv4 Version: %d:%d",s.le.low*4,s.low()*4,s.le.high,s.high());
+            s.u8 = ipv4_header->version_ihl;
+            NET_LOG_DEBUG(NET, "Ipv4 HeaderLength: %d:%d | Ipv4 Version: %d:%d", s.le.low * 4, s.low() * 4, s.le.high, s.high());
+
+            uint16_t total_length = net_ntohs16(ipv4_header->total_length);
+            NET_LOG_DEBUG(NET, "Total length: %d", total_length);
+
+            if (total_length <= ipv4_payload.size() && s.high() == IPV4_VERSION && s.low() >= 5 && (s.low() * 4) <= ipv4_payload.size() && (s.low() * 4) <= total_length )
+            {
+                NET_LOG_DEBUG(NET, "Header is valid");
+
+                /*Identification*/
+                uint16_t identification = net_ntohs16(ipv4_header->identification);
+                NET_LOG_DEBUG(NET, "Identification: %d", identification);
+
+                /*Fragmentation detection */
+                uint16_t flags_fragment_offset = net_ntohs16(ipv4_header->flags_fragment_offset);
+                uint8_t Res_bit = static_cast<uint8_t>(extract_bits<uint16_t,15,1>(flags_fragment_offset)); 
+                uint8_t DF_bit  = static_cast<uint8_t>(extract_bits<uint16_t,14,1>(flags_fragment_offset)); 
+                uint8_t MF_bit  = static_cast<uint8_t>(extract_bits<uint16_t,13,1>(flags_fragment_offset)); 
+                uint16_t fragment_offset_bits = extract_bits<uint16_t,0,13>(flags_fragment_offset); 
+                uint16_t fragment_offset_bytes = fragment_offset_bits*8;
+
+                NET_LOG_DEBUG(NET, "Res:%d|DF:%d|MF:%d|Fragment_Offset:%d|Fragment_Offset_Bytes:%d",Res_bit,DF_bit,MF_bit,fragment_offset_bits,fragment_offset_bytes);
+ 
+                NET_LOG_DEBUG(NET, "Time to Live: %d|Protocol: %d|HeaderChecksum: %d", ipv4_header->ttl,ipv4_header->protocol,net_ntohs16(ipv4_header->header_checksum));
+
+                NET_LOG_DEBUG(NET, "SrcIP:%d.%d.%d.%d | DstIP:%d.%d.%d.%d",ipv4_header->src_ip[0],ipv4_header->src_ip[1],ipv4_header->src_ip[2],ipv4_header->src_ip[3] 
+                                                                        ,ipv4_header->dst_ip[0],ipv4_header->dst_ip[1],ipv4_header->dst_ip[2],ipv4_header->dst_ip[3]);
+
+
+                if(MF_bit==1 || fragment_offset_bits!=0)
+                {
+                    NET_LOG_DEBUG(NET, "Packet is fragmented so dropping for now (Fragmentation not supported)");
+                    return;
+                }
+
+
+        
+            }
+            else
+            {
+                NET_LOG_DEBUG(NET, "Dont trust the packet");
+            }
         }
     }
     void NetworkStack::handle_ipv6_frame(std::span<const std::byte> frame)
@@ -215,13 +256,13 @@ namespace net
         {
         case E_EtherType::Arp:
             /* code */
-             NET_LOG_DEBUG(NET,"ARP frame detected");
+            NET_LOG_DEBUG(NET, "ARP frame detected");
             handle_arp_frame(frame);
             break;
 
         case E_EtherType::IpV4:
             /* code */
-            NET_LOG_DEBUG(NET,"IPV4 frame detected");
+            NET_LOG_DEBUG(NET, "IPV4 frame detected");
             handle_ipv4_frame(frame);
             break;
 
