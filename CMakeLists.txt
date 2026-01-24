@@ -25,6 +25,7 @@ set(SOURCES
   hal/pc_logging_hal.cpp
   net_stack/network_stack.cpp
   net_stack/arp_cache.cpp
+  net_stack/icmpStack.cpp
 )
 
 add_executable(Networking ${SOURCES})

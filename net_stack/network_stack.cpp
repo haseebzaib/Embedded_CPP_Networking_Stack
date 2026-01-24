@@ -188,6 +188,13 @@ namespace net
         if (ipv4_payload.size() >= sizeof(Ipv4Header))
         {
             const Ipv4Header *ipv4_header = reinterpret_cast<const Ipv4Header *>(ipv4_payload.data());
+
+  
+            if(ipv4_header->dst_ip != m_config->ipv4_address)
+            {
+               return;
+            }
+
             net::Split<std::uint8_t> s;
 
             s.u8 = ipv4_header->version_ihl;
@@ -195,6 +202,8 @@ namespace net
 
             uint16_t total_length = net_ntohs16(ipv4_header->total_length);
             NET_LOG_DEBUG(NET, "Total length: %d", total_length);
+
+            uint16_t ihl_bytes = s.low() * 4;
 
             if (total_length <= ipv4_payload.size() && s.high() == IPV4_VERSION && s.low() >= 5 && (s.low() * 4) <= ipv4_payload.size() && (s.low() * 4) <= total_length )
             {
@@ -219,6 +228,11 @@ namespace net
                 NET_LOG_DEBUG(NET, "SrcIP:%d.%d.%d.%d | DstIP:%d.%d.%d.%d",ipv4_header->src_ip[0],ipv4_header->src_ip[1],ipv4_header->src_ip[2],ipv4_header->src_ip[3] 
                                                                         ,ipv4_header->dst_ip[0],ipv4_header->dst_ip[1],ipv4_header->dst_ip[2],ipv4_header->dst_ip[3]);
 
+                if(Res_bit != 1)
+                {
+                   NET_LOG_DEBUG(NET, "Res bit is not 0 so dropping"); 
+                   return;    
+                }
 
                 if(MF_bit==1 || fragment_offset_bits!=0)
                 {
@@ -226,7 +240,16 @@ namespace net
                     return;
                 }
 
+                std::span<const std::byte> ipv4_packet = ipv4_payload.first(total_length);
 
+                std::span<const std::byte> L4_payload = ipv4_packet.subspan(ihl_bytes);
+
+                if(ipv4_header->protocol == IPPROTO_ICMP)
+                {
+                  NET_LOG_DEBUG(NET, "ICMP detected");
+                  
+                  return;
+                }
         
             }
             else

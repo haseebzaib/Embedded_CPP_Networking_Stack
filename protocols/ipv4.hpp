@@ -15,8 +15,8 @@ struct Ipv4Header {
     uint8_t ttl; //time to live
     uint8_t protocol; //number of protocols to which data is to be passed
     uint16_t header_checksum; //for checking errors
-    uint8_t src_ip[4];
-    uint8_t dst_ip[4];
+    std::array<uint8_t, 4> src_ip;
+    std::array<uint8_t, 4> dst_ip;
 };
 #pragma pack(pop)
 

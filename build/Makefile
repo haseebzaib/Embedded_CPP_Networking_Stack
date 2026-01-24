@@ -307,6 +307,30 @@ net_stack/arp_cache.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Networking.dir/build.make CMakeFiles/Networking.dir/net_stack/arp_cache.cpp.s
 .PHONY : net_stack/arp_cache.cpp.s
 
+net_stack/icmpStack.o: net_stack/icmpStack.cpp.o
+.PHONY : net_stack/icmpStack.o
+
+# target to build an object file
+net_stack/icmpStack.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Networking.dir/build.make CMakeFiles/Networking.dir/net_stack/icmpStack.cpp.o
+.PHONY : net_stack/icmpStack.cpp.o
+
+net_stack/icmpStack.i: net_stack/icmpStack.cpp.i
+.PHONY : net_stack/icmpStack.i
+
+# target to preprocess a source file
+net_stack/icmpStack.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Networking.dir/build.make CMakeFiles/Networking.dir/net_stack/icmpStack.cpp.i
+.PHONY : net_stack/icmpStack.cpp.i
+
+net_stack/icmpStack.s: net_stack/icmpStack.cpp.s
+.PHONY : net_stack/icmpStack.s
+
+# target to generate assembly for a file
+net_stack/icmpStack.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Networking.dir/build.make CMakeFiles/Networking.dir/net_stack/icmpStack.cpp.s
+.PHONY : net_stack/icmpStack.cpp.s
+
 net_stack/network_stack.o: net_stack/network_stack.cpp.o
 .PHONY : net_stack/network_stack.o
 
@@ -360,6 +384,9 @@ help:
 	@echo "... net_stack/arp_cache.o"
 	@echo "... net_stack/arp_cache.i"
 	@echo "... net_stack/arp_cache.s"
+	@echo "... net_stack/icmpStack.o"
+	@echo "... net_stack/icmpStack.i"
+	@echo "... net_stack/icmpStack.s"
 	@echo "... net_stack/network_stack.o"
 	@echo "... net_stack/network_stack.i"
 	@echo "... net_stack/network_stack.s"
