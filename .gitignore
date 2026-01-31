@@ -15,6 +15,7 @@ CLAUDE.md
 *.claude
 
 build
+build/*
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)

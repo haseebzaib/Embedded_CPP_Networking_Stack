@@ -26,6 +26,7 @@ namespace net {
 #define LOG_LEVEL_HAL LogLevel::INFO
 #define LOG_LEVEL_NET LogLevel::DEBUG
 #define LOG_LEVEL_ARP LogLevel::DEBUG
+#define LOG_LEVEL_ICMP LogLevel::DEBUG
 
 // Add future components here
 // #define LOG_LEVEL_IP   net::LogLevel::INFO

@@ -2,7 +2,7 @@
 #define PROTOCOLS_IPV4_H
 
 #include "cstdint"
-
+#include <array>
 
 #pragma pack(push,1)
 struct Ipv4Header {

@@ -8,6 +8,7 @@
 #include "byte_order.hpp"
 #include "iostream"
 #include "cstring"
+
 #include <span>
 namespace net
 {
@@ -228,7 +229,7 @@ namespace net
                 NET_LOG_DEBUG(NET, "SrcIP:%d.%d.%d.%d | DstIP:%d.%d.%d.%d",ipv4_header->src_ip[0],ipv4_header->src_ip[1],ipv4_header->src_ip[2],ipv4_header->src_ip[3] 
                                                                         ,ipv4_header->dst_ip[0],ipv4_header->dst_ip[1],ipv4_header->dst_ip[2],ipv4_header->dst_ip[3]);
 
-                if(Res_bit != 1)
+                if(Res_bit != 0)
                 {
                    NET_LOG_DEBUG(NET, "Res bit is not 0 so dropping"); 
                    return;    
@@ -247,6 +248,7 @@ namespace net
                 if(ipv4_header->protocol == IPPROTO_ICMP)
                 {
                   NET_LOG_DEBUG(NET, "ICMP detected");
+                  m_icmp.process_icmp_packet(*this,L4_payload);
                   
                   return;
                 }

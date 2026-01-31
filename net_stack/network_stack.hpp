@@ -9,7 +9,7 @@
 #include "protocols/ethernet.hpp"
 #include "protocols/arp.hpp"
 #include "arp_cache.hpp"
-
+#include "icmpStack.hpp"
 
 
 namespace net {
@@ -47,6 +47,7 @@ namespace net {
 		const NetworkConfig* m_config;
 		uint32_t m_last_periodic_ms = 0;
 		ArpCache m_arp_cache;
+		ICMP_stack m_icmp;
 
 
 	    E_EtherType decode_ether_type(uint16_t ethertype);

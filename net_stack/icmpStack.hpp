@@ -4,7 +4,7 @@
 #include "array"
 #include "cstdint"
 #include "optional"
-
+#include <span>
 #include "protocols/icmp.hpp"
 
 // forward declaration to avoid circular dependencies
@@ -16,11 +16,14 @@ namespace net
 namespace net
 {
 
-    class ICMP
+    class ICMP_stack
     {
 
     public:
+     
+    void process_icmp_packet(NetworkStack& stack,std::span<const std::byte> frame);
     private:
+    void process_echo_request(NetworkStack& stack,std::span<const std::byte> frame);
     };
 
 }

@@ -10,21 +10,22 @@ struct IcmpHeader {
     uint8_t type;
     uint8_t code;
     uint16_t checksum;
-    uint32_t Extended_header;
 };
 
 
 #pragma pack(pop)
 
-
+static_assert(sizeof(IcmpHeader) == 4, "icmp Header must be size of 4 bytes");
 
 enum class icmp_types : uint8_t {
-    Echo_Reply = 0,
-    Dest_unreachable = 3,
-    Redirect_Message  = 5,
-    Echo_Request = 8,
-    Time_Exceedced = 11,
-    Parameter_Problem = 12,
+    EchoReply = 0,
+    DestinationUnreachable = 3,
+    Redirect  = 5,
+    EchoRequest = 8,
+    TimeExceeded = 11,
+    ParameterProblem = 12,
+    TimestampRequest = 13,
+    TimestampReply = 14
 };
 
 
