@@ -6,6 +6,8 @@
 #include "optional"
 #include <span>
 #include "protocols/icmp.hpp"
+#include "protocols/ethernet.hpp"
+#include "protocols/ipv4.hpp"
 
 // forward declaration to avoid circular dependencies
 namespace net
@@ -20,10 +22,13 @@ namespace net
     {
 
     public:
-     
-    void process_icmp_packet(NetworkStack& stack,std::span<const std::byte> frame);
+        void process_icmp_packet(NetworkStack &stack,const EthernetHeader &rx_eth, const Ipv4Header &rx_ip , std::span<const std::byte> frame);
+
     private:
-    void process_echo_request(NetworkStack& stack,std::span<const std::byte> frame);
+        void process_echo_request(NetworkStack &stack,const EthernetHeader &rx_eth, const Ipv4Header &rx_ip ,  std::span<const std::byte> frame);
+        uint16_t internet_checksum(std::span<const std::byte> bytes);
+    
+    
     };
 
 }

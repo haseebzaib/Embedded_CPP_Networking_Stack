@@ -185,6 +185,7 @@ namespace net
     void NetworkStack::handle_ipv4_frame(std::span<const std::byte> frame)
     {
         std::span<const std::byte> ipv4_payload = frame.subspan(sizeof(EthernetHeader));
+        const EthernetHeader *rx_eth = reinterpret_cast<const EthernetHeader*>(frame.data());
 
         if (ipv4_payload.size() >= sizeof(Ipv4Header))
         {
@@ -248,7 +249,7 @@ namespace net
                 if(ipv4_header->protocol == IPPROTO_ICMP)
                 {
                   NET_LOG_DEBUG(NET, "ICMP detected");
-                  m_icmp.process_icmp_packet(*this,L4_payload);
+                  m_icmp.process_icmp_packet(*this,*rx_eth, *ipv4_header,L4_payload);
                   
                   return;
                 }
